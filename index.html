@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Import the component -->
+    
+    <link rel="stylesheet" href="style_dron.css">
+    <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.css">
+</head>
+<body>
+  <model-viewer id="hotspot-camera-view-demo" autoplay animation-name="exploded_view" src="animate/scene.gltf" alt="Thor and the Midgard Serpent" camera-controls touch-action="none" camera-orbit="-8.142746deg 68.967deg 0.6179899m" camera-target="-0.003m 0.0722m 0.0391m" field-of-view="45deg" min-field-of-view="25deg" max-field-of-view="45deg" interpolation-decay="200" min-camera-orbit="auto auto 5%" poster="../../assets/SketchfabModels/ThorAndTheMidgardSerpent.webp" ar>
+    <button id="hotspot-0" class="view-button" slot="hotspot-0" data-position="0.008722765522957279m -0.010571283856223487m 0.05235339208528069m" data-normal="0.6784242373414221m -0.06722488900326112m 0.7315882506480055m" data-orbit="-50.94862deg 84.56856deg 0.06545582m" data-target="0.008722765522957279m -0.010571283856223487m 0.05235339208528069m">
+      Камера
+    </button>      
+    <button id="hotspot-1" class="view-button" slot="hotspot-1" data-position="-0.09295313942733262m 0.12448979743959641m 0.08775432867608328m" data-normal="-0.12337274804542352m 0.9727944317566442m 0.19608711988039504m" data-orbit="3.711166deg 92.3035deg 0.04335197m" data-target="-0.09295313942733262m 0.12448979743959641m 0.08775432867608328m">
+      Пропеллер
+    </button>      
+    <button id="hotspot-2" class="view-button" slot="hotspot-2" data-position="0.012404518364763768m 0.11842885937714183m 0.03766995938795337m" data-normal="-0.10455584941962323m -1.5258209582291667e-9m 0.9945190165864809m" data-orbit="42.72974deg 84.74043deg 0.07104211m" data-target="0.012404518364763768m 0.11842885937714183m 0.03766995938795337m">
+      Винт
+    </button>    
+
+    <div class="slider">
+      <div class="slides">
+        <button class="slide selected" onclick="switchSrc(this, 'scene', true)" style="background-image: url('dron1.png');"></button>
+        <button class="slide" onclick="switchSrc(this, 'razbor3', false)" style="background-image: url('../../assets/ShopifyModels/Mixer.webp');"></button>
+      </div>
+    </div>
+  </model-viewer>
+      <script type="module">
+        const modelViewer = document.querySelector("model-viewer");
+
+        window.switchSrc = (element, name, hasAnimation) => {
+          const base = "animate/" + name;
+          modelViewer.src = base + '.gltf';
+          modelViewer.poster = base + '.webp';
+          const slides = document.querySelectorAll(".slide");
+          slides.forEach((el) => { el.classList.remove("selected"); });
+          element.classList.add("selected");
+
+          modelViewer.addEventListener('load', () => toggleHotspots(!hasAnimation), { once: true });
+        };
+
+        const toggleHotspots = (show) => {
+          const hotspots = document.querySelectorAll('.view-button');
+          hotspots.forEach(hotspot => {
+            hotspot.style.display = show ? 'block' : 'none';
+          });
+        };
+
+        document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
+          ev.preventDefault();
+        });
+
+        // Initial setup: Hide hotspots if the initial model is animated
+        toggleHotspots(false);
+      </script>
+      
+      <style>
+        /* This keeps child nodes hidden while the element loads */
+        :not(:defined) > * {
+          display: none;
+        }
+      
+        model-viewer {
+          background-color: #eee;
+          overflow-x: hidden;
+        }
+      
+
+      
+        @keyframes circle {
+          from { transform: translateX(-50%) rotate(0deg) translateX(50px) rotate(0deg); }
+          to   { transform: translateX(-50%) rotate(360deg) translateX(50px) rotate(-360deg); }
+        }
+      
+        @keyframes elongate {
+          from { transform: translateX(100px); }
+          to   { transform: translateX(-100px); }
+        }
+      
+        model-viewer > #ar-prompt {
+          position: absolute;
+          left: 50%;
+          bottom: 175px;
+          animation: elongate 2s infinite ease-in-out alternate;
+          display: none;
+        }
+      
+        model-viewer[ar-status="session-started"] > #ar-prompt {
+          display: block;
+        }
+      
+        model-viewer > #ar-prompt > img {
+          animation: circle 4s linear infinite;
+        }
+      
+        model-viewer > #ar-failure {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: 175px;
+          display: none;
+        }
+      
+        model-viewer[ar-tracking="not-tracking"] > #ar-failure {
+          display: block;
+        }
+      
+        .slider {
+          width: 100%;
+          text-align: center;
+          overflow: hidden;
+          position: absolute;
+          bottom: 16px;
+        }
+      
+        .slides {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+        }
+      
+        .slide {
+          scroll-snap-align: start;
+          flex-shrink: 0;
+          width: 100px;
+          height: 100px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-color: #fff;
+          margin-right: 10px;
+          border-radius: 10px;
+          border: none;
+          display: flex;
+        }
+      
+        .slide.selected {
+          border: 2px solid #4285f4;
+        }
+      
+        .slide:focus {
+          outline: none;
+        }
+      
+        .slide:focus-visible {
+          outline: 1px solid #4285f4;
+        }
+      
+      </style>
+
+
+
+ 
+
+
+<script type="module">
+  const modelViewer2 = document.querySelector("#hotspot-camera-view-demo");
+  const annotationClicked = (annotation) => {
+    let dataset = annotation.dataset;
+    modelViewer2.cameraTarget = dataset.target;
+    modelViewer2.cameraOrbit = dataset.orbit;
+    modelViewer2.fieldOfView = '45deg';
+  }
+
+  modelViewer2.querySelectorAll('button').forEach((hotspot) => {
+    hotspot.addEventListener('click', () => annotationClicked(hotspot));
+  });
+</script>
+
+<style type="text/css">
+  .view-button {
+    background: #fff;
+    border-radius: 4px;
+    border: none;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.8);
+    display: block;
+    font-family: Futura, Helvetica Neue, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    max-width: 128px;
+    overflow-wrap: break-word;
+    padding: 0.5em 1em;
+    position: absolute;
+    width: max-content;
+    height: max-content;
+    transform: translate3d(-50%, -50%, 0);
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</html>
